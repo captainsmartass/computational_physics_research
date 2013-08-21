@@ -1,0 +1,53 @@
+//
+//  main.cpp
+//  This is one of the C++ codes I wrote to separate data. It takes odd data points given that in this case, this is how 
+//  the polarizatons of the kinmatic variables were separated.
+//
+//  Created by Wyatt Meldman-Floch on 3/12/13.
+//  Copyright (c) 2013 Wyatt Meldman-Floch. All rights reserved.
+//
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+
+using namespace std;
+
+int main() {
+    
+    fstream in;
+    ofstream out;
+    
+    in.open("/Users/Wyatt/Desktop/seniorproject/dplate.txt.out");
+    out.open("/Users/Wyatt/Desktop/seniorproject/root/dplate.rt");
+    
+    string search1 = "R_T=";
+    
+    string line;
+
+    int j = 0;
+    int k = j%2;
+
+    
+    while(in.good()) {
+        getline (in,line,'\n');
+        if (line.find(search1) != string::npos)
+        {   j = j+1;
+            k = j%2;
+  
+            if (k == 0){
+            
+            
+                out << line <<endl;}
+        }
+        
+    }
+    
+    
+    in.close();
+    out.close();
+    
+    return 0;
+    
+}
