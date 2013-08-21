@@ -1,0 +1,72 @@
+% This is a C-code written using the ROOT framework. It calculates the asymmetery between binary datapoints in a giant 
+% file (which in this case is the polarizations of the trajectory of a scattered pion pair.) It also fits the resulting graph.
+
+
+
+
+{ 
+gROOT->Reset(); 
+
+FILE *fp11 = fopen("dplate_1.phir","r");
+FILE *fp12 = fopen("dplate_2.phir","r");
+
+ Float_t x,pr1,pr2,asymmetry,err,bin; 
+
+Int_t ncols_phiR1;
+Int_t ncols_phiR2;
+
+char var1[132];
+
+Int_t nlines_phiR1 = 0;
+Int_t nlines_phiR2 = 0;
+
+TFile *f = new TFile("basic.root","RECREATE"); 
+
+TH1F *h1 = new TH1F("Phi_R_1"," Phi_R_1",100,-180,180);
+TH1F *h2 = new TH1F("Phi_R_2","Phi_R_2",100,-180,180);
+ TH1F *Asymmetry = new TH1F("Phi_R Asymmetry"," Phi_R Asymmetry no dplate",100,-180,180);
+
+ TF1 *fit = new TF1("fit","[1] + [2]*cos(x*((3.14159)/180))");
+fit->SetParLimits(1, -180, 180);
+
+TNtuple *ntuple = new TNtuple("ntuple","data from ascii file","x:y:z:n:w"); 
+
+ while(fscanf(fp11,"%s %s %s %s %f %s",var1,var1,var1,var1, &pr1, var1) != EOF){
+
+
+ 
+ h1->Fill(pr1);
+nlines_phiR1++;
+ }
+
+while( fscanf(fp12,"%s %s %s %s %f %s",var1,var1,var1,var1, &pr2, var1) != EOF){
+
+ h2->Fill(pr2);
+
+
+ 
+
+
+ nlines_phiR2++;
+
+}
+
+Asymmetry = (TH1F*) h1->GetAsymmetry(h2);
+
+fclose(fp11);
+ fclose(fp12);
+f->Write();
+
+TCanvas *c1 = new TCanvas("c1","c1",50,50,800,600);
+
+ c1->Divide(1,3);
+
+ c1->cd(1); 
+ h1->Draw();
+c1->cd(2); 
+ h2->Draw();
+c1->cd(3); 
+ Asymmetry->Fit("fit");
+Asymmetry->SetName("Asymmetry"); 
+ Asymmetry->Draw();
+ }
